@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oráculo IA - Terminal Netrunner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #03060a;
+            color: #ffffff;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #networkCanvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+        
+        /*LOGIN (SISTEMA DE ACCESO) */
+        .login-screen { position: absolute; z-index:2; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background: #03060a; }
+        .login-container { background: rgba(10,17,27,0.9); border: 1px solid #0070e0; padding: 35px; border-radius: 12px; width:100%; max-width:380px; box-shadow: 0 0 30px rgba(0,112,224,0.3); text-align:center;}
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display:block; margin-bottom:8px; color:#0070e0; font-size:12px; font-weight:bold; }
+        .input-group input { width:100%; padding:12px; background:#070c14; border:1px solid #1c2635; border-radius:6px; color:white; box-sizing:border-box; }
+        .input-group input:focus { border-color:#0070e0; outline:none; box-shadow: 0 0 10px rgba(0,112,224,0.4); }
+        .btn { width:100%; padding:14px; background:linear-gradient(135deg, #0056b3, #0070e0); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; box-shadow: 0 0 15px rgba(0,112,224,0.3); transition: 0.2s; }
+        .btn:hover { box-shadow: 0 0 25px rgba(0,112,224,0.6); transform: translateY(-1px); }
+
+        /* PANEL PRINCIPAL */
+        .app-screen { display: none; width: 100%; height: 100%; z-index: 2; position: relative; }
+        
+        /* SIDEBAR: HISTORIAL DE CONVERSACIONES */
+        .sidebar { width: 260px; background: rgba(7, 12, 20, 0.95); border-right: 1px solid #1c2635; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; }
+        .new-chat-btn { background: transparent; border: 1px dashed #0070e0; color: #0070e0; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; transition: 0.3s; }
+        .new-chat-btn:hover { background: rgba(0,112,224,0.1); color: white; box-shadow: 0 0 15px rgba(0,112,224,0.3); }
+        .chat-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-list::-webkit-scrollbar { width: 3px; }
+        .chat-list::-webkit-scrollbar-thumb { background: #1c2635; }
+        .history-item { padding: 12px; background: #0c1420; border: 1px solid #1c2635; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; }
+        .history-item:hover, .history-item.active { border-color: #0070e0; background: #121e30; }
+
+        /*INTERFAZ DE CONVERSACIÓN HOLOGRÁFICA */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: rgba(5, 9, 17, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .chat-header { padding: 15px 25px; border-bottom: 1px solid #1c2635; background: rgba(10,17,27,0.5); }
+        .chat-header h1 { margin:0; font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 10px #0070e0; text-align: left;}
+        .chat-header p { margin: 4px 0 0 0; font-size: 11px; color: #5f758e; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .chat-messages { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #0070e0; border-radius: 2px; }
+
+        .msg { max-width: 80%; padding: 14px 18px; border-radius: 12px; font-size: 14.5px; line-height: 1.6; word-wrap: break-word; }
+        .msg.user { background: #141f32; border: 1px solid #1e2d4a; align-self: flex-end; border-bottom-right-radius: 2px; color: #e2e8f0; }
+        .msg.ai { background: rgba(0, 112, 224, 0.08); border: 1px solid rgba(0, 112, 224, 0.25); align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 0 15px rgba(0,112,224,0.02); }
+        .msg.system { background: transparent; color: #0070e0; font-family: monospace; font-size: 12px; align-self: center; }
+
+        /* ⌨️ SECTOR PROMPT INPUT GIGANTE */
+        .chat-input-container { padding: 20px 25px; border-top: 1px solid #1c2635; background: rgba(7,12,20,0.9); display: flex; gap: 12px; align-items: flex-end; }
+        .chat-input-container textarea { flex: 1; height: 54px; max-height: 150px; background: #070c14; border: 1px solid #1c2635; border-radius: 8px; color: white; padding: 15px; font-size: 15px; resize: none; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
+        .chat-input-container textarea:focus { border-color: #0070e0; outline: none; box-shadow: 0 0 15px rgba(0,112,224,0.2); }
+        .send-btn { height: 54px; width: 60px; margin: 0; display: flex; justify-content: center; align-items: center; font-size: 20px;}
+    </style>
+</head>
+<body>
+
+    <canvas id="networkCanvas"></canvas>
+
+    <!-- ACCESO CRYPT NODE (SIN ETIQUETA FORM PARA EVITAR REFRESCADO AUTOF5) -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <h1 style="font-size:24px; margin-bottom:5px; letter-spacing: 2px;">ORÁCULO TERMINAL</h1>
+            <h2 style="color:#5f758e; font-size:11px; margin-bottom:25px; letter-spacing:1px;">SECURE ACCESS NODE</h2>
+            <div id="loginForm">
+                <div class="input-group">
+                    <label>NETRUNNER ID</label>
+                    <input type="text" id="usernameInput" placeholder="admin" required>
+                </div>
+                <div class="input-group">
+                    <label>ACCESS CRYPT</label>
+                    <input type="password" id="passwordInput" placeholder="••••••••" required>
+                </div>
+                <button type="button" class="btn" onclick="ejecutarLogin()">INITIALIZE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL: NETRUNNER PANEL -->
+    <div class="app-screen" id="appScreen">
+        <div class="sidebar">
+            <button class="new-chat-btn" id="newChatBtn">+ NUEVA MATRIZ DE CHAT</button>
+            <div class="chat-list" id="chatList"></div>
+        </div>
+        <div class="chat-area">
+            <div class="chat-header">
+                <h1>ORÁCULO IA</h1>
+                <p id="chatTitle">MATRIZ_ACTIVA: NO_NODE</p>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="msg system">[SISTEMA]: Enlace asíncrono establecido con HTTPX. Canal listo.</div>
+            </div>
+            <div class="chat-input-container">
+                <textarea id="promptInput" placeholder="Escribe tu prompt aquí... (Enter envía, Shift+Enter salta de línea)"></textarea>
+                <button id="sendBtn" class="btn send-btn">⚡</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔌 ENLACE DIRECTO AL ARCHIVO DE LÓGICA EXTERNA CORREGIDO -->
+    <script src="script.js"></script>
+</body>
+</html>
