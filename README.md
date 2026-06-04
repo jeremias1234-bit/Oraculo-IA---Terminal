@@ -4,8 +4,6 @@ Es un asistente inteligente local de arquitectura asíncrona diseñado para opti
 
 ## 🏗️ Arquitectura y Flujo del Sistema
 
-## 🏗️ Arquitectura y Flujo del Sistema
-
 El proyecto está diseñado bajo un modelo monolítico ligero, estructurado en tres componentes principales interconectados:
 
 ```text
