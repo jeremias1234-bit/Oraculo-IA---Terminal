@@ -4,15 +4,21 @@ Es un asistente inteligente local de arquitectura asíncrona diseñado para opti
 
 ## 🏗️ Arquitectura y Flujo del Sistema
 
-El proyecto está diseñado bajo un modelo monolítico ligero, estructurado en tres componentes principales interconectados:# Oraculo-IA---Terminal
+El proyecto está diseñado bajo un modelo monolítico ligero, estructurado en tres componentes principales interconectados:
 
-[ index.html ]  🌐 (Interfaz de usuario y estilos CSS)│
-▼  ↕ (Persistencia en LocalStorage / Peticiones Asíncronas)
-[ script.js ]  ⚡ (Lógica del lado del cliente y manejo de flujos)│
-▼  ↕ (Fetch API / Protocolo HTTP)
-[  app.py   ]  🐍 (Backend asíncrono con FastAPI y cliente HTTPX)│
-▼  ↕ (Canalización de Streaming de datos)
-[ Ollama / Llama 3.1 ] 🤖 (Procesamiento y generación de IA Local)
+```text
+    [ index.html ]  🌐 (Interfaz de usuario y estilos CSS)
+          │
+          ▼  ↕ (Persistencia en LocalStorage / Peticiones Asíncronas)
+    [ script.js ]  ⚡ (Lógica del lado del cliente y manejo de flujos)
+          │
+          ▼  ↕ (Fetch API / Protocolo HTTP)
+    [  app.py   ]  🐍 (Backend asíncrono con FastAPI y cliente HTTPX)
+          │
+          ▼  ↕ (Canalización de Streaming de datos)
+    [ Ollama / Llama 3.1 ] 🤖 (Procesamiento y generación de IA Local)
+```
+
 
 ## 🛠️ Componentes y Tecnologías Utilizadas
 
