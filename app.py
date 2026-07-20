@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🛡️ DEFINICIÓN DEL MODELO DE DATOS JSON
+# DEFINICIÓN DEL MODELO DE DATOS JSON
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -28,14 +28,14 @@ MODEL_NAME = "llama3.1:8b"
 async def server_status():
     return "<h1>⚡ SERVIDOR DEL ORÁCULO IA PRO ONLINE ⚡</h1>"
 
-# 🔐 ENDPOINT DE AUTENTICACIÓN JSON ÚNICO
+# ENDPOINT DE AUTENTICACIÓN JSON ÚNICO
 @app.post("/api/login")
 async def login_process(request: LoginRequest):
     if request.username == "admin" and request.password == "oraculo2026":
         return {"status": "success"}
     raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
-# 🧠 GENERADOR ASÍNCRONO DE TOKENS (VELOCIDAD ULTRA)
+# GENERADOR ASÍNCRONO DE TOKENS (VELOCIDAD ULTRA)
 async def ollama_stream_generator(user_message: str):
     system_prompt = (
         "Sos el Oráculo de la facultad, un asistente inteligente para alumnos ingresantes. "
@@ -44,7 +44,7 @@ async def ollama_stream_generator(user_message: str):
     payload = {
         "model": MODEL_NAME,
         "prompt": f"{system_prompt}\n\nAlumno: {user_message}\nOráculo:",
-        "stream": True # 🚀 Habilitamos que Ollama escupa palabra por palabra
+        "stream": True # Habilitamos que Ollama escupa palabra por palabra
     }
     
     async with httpx.AsyncClient(timeout=60.0) as client:
