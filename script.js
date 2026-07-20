@@ -1,17 +1,17 @@
-// --- 💾 HISTORIAL EN LOCALSTORAGE ---
+// --- HISTORIAL EN LOCALSTORAGE ---
 let historialChats = JSON.parse(localStorage.getItem('oraculo_chats')) || {};
 let chatIdActivo = null;
 
 const canvas = document.getElementById('networkCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- 🔐 AUTENTICACIÓN ASÍNCRONA ---
+// --- AUTENTICACIÓN ASÍNCRONA ---
 async function ejecutarLogin() {
     const userVal = document.getElementById('usernameInput').value.trim();
     const passVal = document.getElementById('passwordInput').value.trim();
 
     if (!userVal || !passVal) {
-        alert("⚠️ Por favor, completa todos los campos.");
+        alert("Por favor, completa todos los campos.");
         return;
     }
 
@@ -28,10 +28,10 @@ async function ejecutarLogin() {
             resizeCanvas();
             inicializarEntorno();
         } else { 
-            alert("🔥 Acceso Denegado: Firma criptográfica no coincide."); 
+            alert(" Acceso Denegado: Firma criptográfica no coincide."); 
         }
     } catch (err) { 
-        alert("❌ Error de enlace. Verifica que app.py esté corriendo."); 
+        alert("Error de enlace. Verifica que app.py esté corriendo."); 
     }
 }
 
@@ -78,7 +78,7 @@ function renderizarListaChats() {
     });
 }
 
-// --- 🚀 MOTOR STREAMING ULTRA VELOCIDAD ---
+// --- MOTOR STREAMING ULTRA VELOCIDAD ---
 async function enviarPrompt() {
     const input = document.getElementById('promptInput');
     const chatBox = document.getElementById('chatMessages');
@@ -134,7 +134,7 @@ document.getElementById('promptInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarPrompt(); }
 });
 
-// --- 🌌 ANIMACIÓN DEL FONDO (CANVAS) ---
+// --- ANIMACIÓN DEL FONDO (CANVAS) ---
 function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 const particles = [];
 class Particle {
